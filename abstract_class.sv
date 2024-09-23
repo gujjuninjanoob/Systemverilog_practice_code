@@ -83,3 +83,61 @@ endmodule
 # End time: 07:22:13 on Sep 23,2024, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
 */
+
+virtual class virtClass;
+   bit [3:0]   myVar;
+
+   //This is a "pure virtual" function; should NOT have body. This must be 
+   //overridden when you override the base class, else you get compilation error   
+   pure virtual function void display ();
+endclass
+     
+class overClass extends virtClass;
+
+// A non-abstract class cannot declare an unimplemented virtual method
+//ERROR this will cause an error 
+ //  pure virtual function show ();
+
+
+// Since virtClass has a pure function, it must be defined here
+
+   virtual function void display ();
+      $display ("This is a pure function re-defined");
+   endfunction
+
+
+   function void random ();
+      $display ("Random number : %0h", $random);
+   endfunction
+endclass
+
+//-----------------------------------------------------------------------------
+//                               tb_top
+//-----------------------------------------------------------------------------
+
+module tb_top;
+
+   virtClass vClass;
+   overClass oClass;
+
+   initial begin
+
+// Turn this On to get a run time error for trying to instantiate an abstract
+// class
+ //ERROR: we cant create these as vClass is abstract class
+      vClass = new ();
+
+
+// oClass is NOT an abstract class
+      oClass = new ();
+      oClass.display ();
+      oClass.random ();
+   end
+/*
+# run -all
+# This is a pure function re-defined
+# Random number : 12153524
+# exit
+# End time: 07:35:31 on Sep 23,2024, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+*/
